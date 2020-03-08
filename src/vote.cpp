@@ -87,8 +87,8 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
         
         auto voter_itr == _producers.find( item.first );
 
-        if (is_voter_registered_bp(voter_itr->owner)) continue;
-        if (is_voter_paid_bp(voter_itr->owner)) continue;
+        if (is_voter_registered_bp(voter_itr->owner)==false) continue;
+        if (is_voter_paid_bp(voter_itr->owner)==false) continue;
 
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;

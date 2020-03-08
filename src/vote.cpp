@@ -58,9 +58,9 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
     for (std::pair<eosio::name, eosio::name> item : votes) {
         const eosio::name vote = item.second;
         
-        auto is_valid == _producers.find( item.first );
+        auto voter_itr == _producers.find( item.first );
 
-        if (is_valid==_producers.end()) continue;
+        if (check_voter_eligible(voter_itr)) continue;
 
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;

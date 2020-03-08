@@ -57,6 +57,11 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
     int16_t total_net_votes = 0;
     for (std::pair<eosio::name, eosio::name> item : votes) {
         const eosio::name vote = item.second;
+        
+        auto is_valid == _producers.find( item.first );
+
+        if (is_valid==_producers.end()) continue;
+
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;
     }
@@ -103,7 +108,9 @@ void wps::update_eligible_proposals()
         for ( auto proposal_name : itr->second ) {
             // proposal variables
             auto proposal_itr = _proposals.find( proposal_name.value );
-            const int16_t total_net_votes = itr->first;
+            auto votes_itr = _votes.find( proposal_name.value );
+
+            const int16_t total_net_votes = calculate_total_net_votes( votes_itr->votes );
             const eosio::name proposer = proposal_itr->proposer;
             const eosio::asset monthly_budget = proposal_itr->monthly_budget;
 

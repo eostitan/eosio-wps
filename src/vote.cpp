@@ -41,8 +41,7 @@ bool is_voter_registered_bp( const eosio::name voter ){
     producers_table _producers( "eosio"_n, "eosio"_n.value );
     auto producers_itr = _producers.find( voter.value );
 
-    const eosio::time_point last_24h = time_point(current_time_point() - time_point_sec(DAY));
-    is_registered = producers_itr->last_claim_time >= last_24h;
+    is_registered = producers_itr != producers_itr.end();
 
     return is_registered;
 

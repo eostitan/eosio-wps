@@ -41,7 +41,7 @@ bool is_voter_registered_bp( const eosio::name voter ){
     producers_table _producers( "eosio"_n, "eosio"_n.value );
     auto producers_itr = _producers.find( voter.value );
 
-    is_registered = producers_itr != producers_itr.end();
+    is_registered = producers_itr != _producers.end();
 
     return is_registered;
 
@@ -84,10 +84,10 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
     for (std::pair<eosio::name, eosio::name> item : votes) {
         const eosio::name vote = item.second;
         
-        auto voter_itr == _producers.find( item.first );
+        auto voter_itr = _producers.find( item.first.value );
 
-        if (is_voter_registered_bp(voter_itr->owner)==false) continue;
-        if (is_voter_paid_bp(voter_itr->owner)==false) continue;
+        if (is_voter_registered_bp(voter_itr->producer)==false) continue;
+        if (is_voter_paid_bp(voter_itr->producer)==false) continue;
 
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;

@@ -60,7 +60,7 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
         
         auto voter_itr == _producers.find( item.first );
 
-        if (check_voter_eligible(voter_itr)) continue;
+        if (check_voter_eligible(voter_itr)==false) continue;
 
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;

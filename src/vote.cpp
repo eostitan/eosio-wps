@@ -34,14 +34,41 @@ void wps::voteproducer( const eosio::name voter, const eosio::name proposal_name
     wps::vote( voter, proposal_name, vote );
 }
 
-void wps::check_voter_eligible( const eosio::name voter )
-{
+bool is_voter_registered_bp( const eosio::name voter ){
+
+    bool is_registered = true;
+
     producers_table _producers( "eosio"_n, "eosio"_n.value );
     auto producers_itr = _producers.find( voter.value );
 
     const eosio::time_point last_24h = time_point(current_time_point() - time_point_sec(DAY));
-    check( producers_itr != _producers.end(), "[voter] must be registered as a producer");
-    check( producers_itr->last_claim_time >= last_24h, "[voter] must have claimed producer rewards within the last 24 hours");
+    is_registered = producers_itr->last_claim_time >= last_24h;
+
+    return is_registered;
+
+}
+
+bool is_voter_paid_bp( const eosio::name voter ){
+
+    bool is_paid = true;
+
+    producers_table _producers( "eosio"_n, "eosio"_n.value );
+    auto producers_itr = _producers.find( voter.value );
+
+    const eosio::time_point last_24h = time_point(current_time_point() - time_point_sec(DAY));
+    is_paid = producers_itr->last_claim_time >= last_24h;
+
+    return is_paid;
+
+}
+
+void wps::check_voter_eligible( const eosio::name voter )
+{
+    bool registered = is_voter_registered_bp(voter);
+    bool paid = is_voter_paid_bp(voter);
+
+    check( registered, "[voter] must be registered as a producer");
+    check( paid, "[voter] must have claimed producer rewards within the last 24 hours");
 }
 
 void wps::check_proposal_can_vote( const eosio::name proposal_name )
@@ -60,7 +87,8 @@ int16_t wps::calculate_total_net_votes( const std::map<eosio::name, eosio::name>
         
         auto voter_itr == _producers.find( item.first );
 
-        if (check_voter_eligible(voter_itr)==false) continue;
+        if (is_voter_registered_bp(voter_itr->owner)) continue;
+        if (is_voter_paid_bp(voter_itr->owner)) continue;
 
         if (vote == "yes"_n) total_net_votes += 1;
         else if (vote == "no"_n) total_net_votes -= 1;
